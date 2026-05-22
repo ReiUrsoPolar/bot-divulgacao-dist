@@ -7,3 +7,9 @@ database/
 config/bot.json
 *.jsonl
 .tmp/
+
+# Variáveis de ambiente do criador — nunca commitar
+.env
+
+# Output do build/obfuscação
+dist/
