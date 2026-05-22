@@ -30,6 +30,9 @@ atualizar() {
   # ── Modo Git (preferido) ────────────────────────────────────────────
   if command -v git &>/dev/null && [ -d ".git" ]; then
 
+    # Garantir que origin aponta SEMPRE para o repo dist (código ofuscado)
+    git remote set-url origin "$DIST_REPO" 2>/dev/null || true
+
     git fetch origin main --quiet 2>/dev/null
     LOCAL=$(git rev-parse HEAD 2>/dev/null)
     REMOTE=$(git rev-parse origin/main 2>/dev/null)
