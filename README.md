@@ -1,6 +1,6 @@
 # 🤖 Bot Divulgação
 
-Bot de WhatsApp para divulgação automática em grupos, com sistema de licenças, venda automática do arquivo e planos de divulgação como serviço.
+Bot de WhatsApp para divulgação automática em grupos, com venda de planos de divulgação como serviço e pagamentos automáticos via Pix.
 
 ---
 
@@ -11,11 +11,9 @@ Bot de WhatsApp para divulgação automática em grupos, com sistema de licença
 3. [Instalação](#instalação)
 4. [Configuração](#configuração)
 5. [Comandos](#comandos)
-6. [Venda do Arquivo (Automática)](#venda-do-arquivo-automática)
-7. [Planos de Divulgação](#planos-de-divulgação)
-8. [Pagamentos Automáticos — Mercado Pago](#pagamentos-automáticos--mercado-pago)
-9. [IA no PV](#ia-no-pv)
-10. [Distribuição Obfuscada](#distribuição-obfuscada)
+6. [Planos de Divulgação — Vender como Serviço](#planos-de-divulgação--vender-como-serviço)
+7. [Pagamentos Automáticos — Mercado Pago](#pagamentos-automáticos--mercado-pago)
+8. [IA no PV](#ia-no-pv)
 
 ---
 
@@ -25,8 +23,7 @@ Bot de divulgação para WhatsApp que permite:
 
 - Enviar mensagens/media para centenas de grupos automaticamente
 - Agendar envios por hora ou intervalo de tempo
-- **Vender o arquivo do bot** directamente no PV, com entrega automática após pagamento
-- **Vender tempo de divulgação** como serviço — clientes pagam para ter o seu conteúdo enviado aos teus grupos de X em X minutos
+- **Vender tempo de divulgação como serviço** — clientes pagam para ter o conteúdo deles enviado aos teus grupos de X em X minutos, com pagamento automático via Pix
 
 ---
 
@@ -39,10 +36,9 @@ Bot de divulgação para WhatsApp que permite:
 | 🔗 Auto-entrar | Entra automaticamente em grupos via link detectado nas mensagens |
 | 🚪 Auto-sair | Sai de grupos onde só admins podem falar |
 | 🤖 IA no PV | Responde com Google Gemini a mensagens no PV de não-donos |
-| 🛒 Venda automática | Comprador paga via Pix → bot gera licença e envia bot.json automaticamente |
 | 📢 Divulg. como serviço | Clientes pagam para ter o conteúdo deles enviado aos teus grupos |
+| 💳 Pix automático | Integração com Mercado Pago — cliente paga e o plano activa sozinho |
 | 🔔 Notificações PV | Recebe aviso quando alguém escreve ao bot no PV |
-| 🔒 Licenças | Sistema de licenças com validação offline + revogação online |
 
 ---
 
@@ -56,7 +52,7 @@ Bot de divulgação para WhatsApp que permite:
 ### Passos
 
 ```bash
-# 1. Clonar o repositório (versão pública/obfuscada)
+# 1. Descarregar o bot
 git clone https://github.com/ReiUrsoPolar/bot-divulgacao-dist
 cd bot-divulgacao-dist
 
@@ -105,11 +101,6 @@ node index.js
 
 ```json
 {
-  "planos": {
-    "30dias":  { "nome": "Bot 30 dias",  "preco": 25,  "dias": 30  },
-    "90dias":  { "nome": "Bot 90 dias",  "preco": 60,  "dias": 90  },
-    "180dias": { "nome": "Bot 180 dias", "preco": 100, "dias": 180 }
-  },
   "planos_divulgacao": {
     "basico": { "nome": "Divulgação Básico", "preco": 50,  "dias": 30, "intervalo": 60 },
     "pro":    { "nome": "Divulgação Pro",    "preco": 90,  "dias": 30, "intervalo": 30 },
@@ -121,12 +112,13 @@ node index.js
 
 | Campo | Descrição |
 |---|---|
-| `planos` | Planos de venda do arquivo do bot (comando `!comprar`) |
-| `planos.*.preco` | Preço em R$ |
-| `planos.*.dias` | Duração da licença em dias |
-| `planos_divulgacao` | Planos de divulgação que vendes aos teus clientes (comando `!plano`) |
-| `planos_divulgacao.*.intervalo` | De quantos em quantos minutos o bot vai divulgar o conteúdo do cliente |
+| `planos_divulgacao` | Planos de divulgação que vendes aos teus clientes (`!plano`) |
+| `planos_divulgacao.*.preco` | Preço em R$ |
+| `planos_divulgacao.*.dias` | Duração do plano em dias |
+| `planos_divulgacao.*.intervalo` | De quantos em quantos minutos o bot envia o conteúdo do cliente |
 | `pixKey` | Chave Pix para receber pagamentos manuais (quando MP não está configurado) |
+
+> Podes também gerir os planos directamente via comandos — ver secção [Planos de Divulgação](#planos-de-divulgação--vender-como-serviço).
 
 ---
 
@@ -144,7 +136,7 @@ node index.js
 | `!cancelar [id]` | Cancela um agendamento específico ou todos |
 | `!historico` | Mostra os últimos envios com grupos atingidos e erros |
 
-> Para media: faz **reply** ao ficheiro/imagem antes de usar o comando.
+> Para media: faz **reply** à imagem/vídeo/documento antes de usar o comando.
 
 ---
 
@@ -160,11 +152,11 @@ node index.js
 
 ---
 
-### 🛒 Venda de Divulgação (Serviço)
+### 🛒 Planos de Divulgação
 
 | Comando | Descrição |
 |---|---|
-| `!plano` | Lista os planos de divulgação configurados |
+| `!plano` | Lista os planos de divulgação configurados e o estado do Mercado Pago |
 | `!plano add basico 50 30 60` | Cria plano: key=basico, R$50, 30 dias, envio a cada 60 min |
 | `!plano remove basico` | Remove o plano |
 | `!mptoken APP_USR-xxx` | Configura o token do Mercado Pago (pagamentos automáticos) |
@@ -189,182 +181,105 @@ node index.js
 
 ---
 
-### 🔑 Comandos do Criador (exclusivos)
-
-| Comando | Descrição |
-|---|---|
-| `!addkey <numero> <plano>` | Gera licença e envia bot.json configurado para o comprador |
-| `!addkey @pessoa 30dias` | Mesmo que acima, mas menciona a pessoa em vez de escrever o número |
-| `!revogar <keyId>` | Revoga uma licença imediatamente |
-| `!clientes` | Lista todos os compradores do arquivo com data de expiração |
-
----
-
-## Venda do Arquivo (Automática)
-
-### Fluxo pelo lado do comprador
-
-```
-Comprador → !comprar 30dias
-         → Bot mostra termos + preço
-         → Comprador responde "aceito"
-         → Bot gera QR code Pix (ou mostra chave Pix manual)
-         → Comprador paga
-         → Bot detecta pagamento ✅
-         → Bot gera licença automaticamente
-         → Bot envia bot.json já configurado para o comprador
-         → Comprador substitui o ficheiro e arranca o bot
-```
-
-### Fluxo pelo lado do criador (manual, sem MP)
-
-```
-Criador verifica pagamento no banco
-→ !addkey 351912345678 30dias
-→ Bot gera a licença
-→ Bot envia mensagem de boas-vindas + bot.json para o comprador automaticamente
-```
-
----
-
-## Planos de Divulgação
+## Planos de Divulgação — Vender como Serviço
 
 O dono pode **vender divulgação como serviço** — clientes pagam para ter o conteúdo deles enviado para os teus grupos de X em X minutos.
 
-### Configurar planos
+### 1. Criar os planos
 
 ```
 !plano add basico 50 30 60
 ```
-→ Cria o plano `basico`: R$50, 30 dias, envio a cada 60 minutos
+→ Cria o plano `basico`: R$50, 30 dias, envio a cada **60 minutos**
 
 ```
 !plano add pro 90 30 30
 ```
-→ Cria o plano `pro`: R$90, 30 dias, envio a cada 30 minutos
-
-### Fluxo para o cliente
+→ Cria o plano `pro`: R$90, 30 dias, envio a cada **30 minutos**
 
 ```
-Cliente → !plano basico (no PV do bot)
-        → Bot mostra termos do plano
-        → Cliente responde "aceito"
-        → Bot gera QR code Pix via Mercado Pago
-        → Cliente paga
-        → Bot confirma e pede o conteúdo a divulgar
-        → Cliente envia mensagem/imagem/vídeo
-        → Bot agenda o envio automático para todos os grupos
-        → Envio a cada 60 min durante 30 dias
-        → No final do período, agendamento é cancelado automaticamente
+!plano add ultra 150 30 15
 ```
+→ Cria o plano `ultra`: R$150, 30 dias, envio a cada **15 minutos**
 
-### Ver e gerir clientes
+> Podes criar quantos planos quiseres com preços, durações e intervalos diferentes.
 
-```
-!clientes_div
-→ Lista todos os clientes activos com dias restantes
-
-!expulsar 351912345678
-→ Remove o cliente e cancela o agendamento imediatamente
-```
-
----
-
-## Pagamentos Automáticos — Mercado Pago
-
-O sistema suporta dois tokens de Mercado Pago independentes:
-
-### 1. Token do Dono (para vender divulgação)
-
-Configura-se directamente no bot via comando:
+### 2. Configurar pagamento automático (opcional, mas recomendado)
 
 ```
 !mptoken APP_USR-1234567890abcdef-...
 ```
 
-- O token é guardado de forma segura na base de dados local
-- Quando configurado, o bot gera QR codes Pix automaticamente
-- Sonda o pagamento a cada 15 segundos por até 30 minutos
-- Quando aprovado, activa o plano e pede o conteúdo ao cliente
+Com o Mercado Pago configurado, o fluxo é 100% automático. Sem ele, o cliente paga e tu activás manualmente.
 
-**Onde obter:**
+### 3. Fluxo para o cliente
+
+```
+Cliente → !plano basico  (no PV do bot)
+        → Bot mostra termos do plano
+        → Cliente responde "aceito"
+        → Bot gera QR code Pix automaticamente
+        → Cliente paga no banco
+        → Bot detecta o pagamento e pede o conteúdo
+        → Cliente envia mensagem, imagem ou vídeo
+        → Bot agenda envio automático a cada 60 min por 30 dias
+        → No fim do período, cancela automaticamente
+```
+
+### 4. Gerir clientes activos
+
+```
+!clientes_div
+```
+→ Mostra todos os clientes activos com o plano, intervalo e dias restantes
+
+```
+!expulsar 351912345678
+```
+→ Remove o cliente e cancela imediatamente o agendamento
+
+---
+
+## Pagamentos Automáticos — Mercado Pago
+
+### Configurar
+
 1. Acede a [mercadopago.com.br](https://mercadopago.com.br)
-2. Menu → Credenciais
-3. Copia o **Access Token de Produção** (começa com `APP_USR-`)
+2. Inicia sessão na tua conta
+3. Menu lateral → **Credenciais**
+4. Selecciona **Produção** (nunca Teste)
+5. Copia o **Access Token** (começa com `APP_USR-`)
+6. No bot: `!mptoken APP_USR-...`
 
-> ⚠️ Nunca partilhes o Access Token. Trata-o como uma senha.
+### Como funciona
 
----
+- Quando um cliente aceita os termos, o bot gera um **QR code Pix** e envia na conversa
+- O cliente copia o código e paga no banco
+- O bot sonda o pagamento a cada **15 segundos** por até **30 minutos**
+- Quando aprovado, activa o plano automaticamente e pede o conteúdo ao cliente
+- Se o prazo de 30 minutos expirar sem pagamento, o bot avisa o cliente para tentar novamente
 
-### 2. Token do Criador (para vender o arquivo automaticamente)
+### Fallback sem Mercado Pago
 
-Apenas o criador do bot preenche este campo, antes de distribuir:
+Se não configurares o token MP, o bot mostra a chave Pix do `loja.json` e diz ao cliente para entrar em contacto. Tens de activar o plano manualmente após verificares o pagamento.
 
-1. Abre `src/licenca.js`
-2. Localiza a linha `const _MPT = ''`
-3. Preenche com o teu token dividido em partes (para ofuscação):
-
-```js
-const _MPT = ['APP_USR-', '12345678', '90abcdef', '-...'].join('')
-```
-
-Quando configurado, o fluxo `!comprar` gera o Pix automaticamente e entrega o arquivo sem precisares de fazer nada manualmente.
-
-**Se deixares vazio:** O bot funciona no modo manual — mostra a chave Pix do `loja.json` e diz ao comprador para entrar em contacto.
-
----
-
-### Fallback Manual (sem Mercado Pago)
-
-Se nenhum token estiver configurado, o bot mostra:
-
-```
-💰 Valor: R$ 50,00
-📋 Chave Pix: tua-chave@banco.com
-
-Após o pagamento, entra em contacto:
-👉 wa.me/351913579908
-```
-
-O dono confirma o pagamento no banco e usa `!addkey` ou `!mptoken` para activar.
+> ⚠️ **Segurança:** Nunca partilhes o Access Token. Trata-o como uma senha. Se for comprometido, regenera-o nas Credenciais do Mercado Pago.
 
 ---
 
 ## IA no PV
 
-Quando `!ia on` está activo, o bot responde com inteligência artificial a qualquer pessoa que escreva no PV (que não seja dono/criador).
+Quando `!ia on` está activo, o bot responde com inteligência artificial a qualquer pessoa que escreva no PV (que não seja dono).
 
 ### Configurar
 
-1. Obtém uma API Key gratuita em [aistudio.google.com](https://aistudio.google.com)
+1. Obtém uma API Key gratuita em [aistudio.google.com](https://aistudio.google.com) → **Get API Key**
 2. Coloca-a em `config/bot.json` no campo `geminiKey`
 3. Activa com `!ia on`
 
 ### Comportamento
 
-- Não-donos que escrevem no PV recebem uma resposta inteligente
-- Os comandos `!comprar` e `!plano` continuam a funcionar mesmo com IA activa
-- Se `!pv off`, a IA também é desactivada (bot não responde de todo)
+- Não-donos que escrevem no PV recebem uma resposta gerada com IA
+- Os comandos `!plano` continuam a funcionar mesmo com IA activa
+- Com `!pv off`, a IA também é desactivada (bot não responde de todo)
 - Com `!pv notificar on`, o dono recebe um aviso de cada mensagem recebida no PV
-
----
-
-## Distribuição Obfuscada
-
-O código-fonte privado é automaticamente ofuscado e publicado no repositório público [`bot-divulgacao-dist`](https://github.com/ReiUrsoPolar/bot-divulgacao-dist) via GitHub Actions.
-
-### O que fica ofuscado
-
-- Número do criador
-- Token da API de licenças
-- Token do Mercado Pago do criador (se preenchido)
-- URL da API de licenças
-- Toda a lógica do código-fonte
-
-### O que o dono pode ver/editar
-
-- `config/bot.json` — número, licença, geminiKey, dono, nomeBot, prefix
-- `config/loja.json` — preços, planos, chave Pix
-- `config/msgs.json` — mensagens personalizadas do bot
-
-Nenhum dado do criador aparece nos ficheiros editáveis pelo dono.

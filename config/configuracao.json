@@ -1,5 +1,5 @@
 {
-  "_info": "Este ficheiro documenta todas as configurações e tokens do Bot Divulgação. Não é lido pelo bot — serve apenas como referência.",
+  "_info": "Este ficheiro documenta todas as configurações do Bot Divulgação. Não é lido pelo bot — serve apenas como referência.",
 
   "bot_json": {
     "_info": "Ficheiro principal de configuração — config/bot.json",
@@ -12,22 +12,22 @@
       },
       "licencaKey": {
         "desc": "Chave de licença recebida após a compra. Começa sempre com POLAR-",
-        "exemplo": "POLAR-eyJleHAiOjE3MTk4MDc2MDAsImNsaWVudGUiOiJbRElWXSAzNTE5MTM1Nzk5MDgifQ.xxxx",
+        "exemplo": "POLAR-eyJleHAiOjE3...",
         "obrigatorio": true
       },
       "geminiKey": {
-        "desc": "API Key do Google Gemini para respostas com IA no PV. Opcional — só precisas se quiseres activar !ia on",
+        "desc": "API Key do Google Gemini para respostas com IA no PV. Só precisas se quiseres activar !ia on.",
         "exemplo": "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-        "onde_obter": "https://aistudio.google.com → Get API Key → Create API key",
+        "onde_obter": "https://aistudio.google.com → Get API Key → Create API key (gratuito)",
         "obrigatorio": false
       },
       "dono": {
-        "desc": "Número de WhatsApp do dono do bot (quem tem acesso a todos os comandos !)",
+        "desc": "Número de WhatsApp do dono do bot — tem acesso a todos os comandos !",
         "exemplo": "351912345678",
         "obrigatorio": true
       },
       "nomeBot": {
-        "desc": "Nome do bot — aparece nos logs e mensagens de sistema",
+        "desc": "Nome do bot — aparece nos logs",
         "exemplo": "Bot Divulgação",
         "obrigatorio": false
       },
@@ -41,36 +41,20 @@
 
   "loja_json": {
     "_info": "Ficheiro de planos e pagamento — config/loja.json",
-    "_nota": "Podes editar livremente. Também podes gerir planos_divulgacao via comandos !plano add/remove no bot.",
+    "_nota": "Podes editar directamente aqui ou usar os comandos !plano add/remove no bot.",
     "campos": {
       "pixKey": {
-        "desc": "Chave Pix para recebimento manual (quando Mercado Pago não está configurado). Pode ser CPF, email, telefone ou chave aleatória.",
-        "exemplo": "12345678900",
-        "quando_usar": "Sempre que não tens o Mercado Pago configurado, esta chave aparece nas mensagens de pagamento"
-      },
-      "planos": {
-        "desc": "Planos de venda do arquivo do bot. Cada comprador usa !comprar <key> no PV.",
-        "estrutura": {
-          "<key>": {
-            "nome": "Nome legível do plano",
-            "preco": "Preço em R$ (número)",
-            "dias": "Duração da licença em dias (número)"
-          }
-        },
-        "exemplo": {
-          "30dias":  { "nome": "Bot 30 dias",  "preco": 25,  "dias": 30  },
-          "90dias":  { "nome": "Bot 90 dias",  "preco": 60,  "dias": 90  },
-          "180dias": { "nome": "Bot 180 dias", "preco": 100, "dias": 180 }
-        }
+        "desc": "Chave Pix para receber pagamentos manuais (quando Mercado Pago não está configurado). Pode ser CPF, email, telefone ou chave aleatória.",
+        "exemplo": "12345678900"
       },
       "planos_divulgacao": {
-        "desc": "Planos de divulgação que vendes aos teus clientes como serviço. Cada cliente usa !plano <key> no PV.",
+        "desc": "Planos de divulgação que vendes aos teus clientes. Cada cliente usa !plano <key> no PV do bot.",
         "estrutura": {
           "<key>": {
-            "nome": "Nome legível do plano",
+            "nome": "Nome legível do plano (aparece nas mensagens)",
             "preco": "Preço em R$ (número)",
             "dias": "Duração do plano em dias (número)",
-            "intervalo": "De quantos em quantos MINUTOS o bot vai divulgar o conteúdo do cliente (número)"
+            "intervalo": "De quantos em quantos MINUTOS o bot envia o conteúdo do cliente para os grupos (número)"
           }
         },
         "exemplo": {
@@ -79,10 +63,10 @@
           "ultra":  { "nome": "Ultra",  "preco": 150, "dias": 30, "intervalo": 15 }
         },
         "como_gerir_via_bot": [
-          "!plano add basico 50 30 60   → cria plano basico",
-          "!plano add pro 90 30 30      → cria plano pro",
-          "!plano remove basico         → remove o plano",
-          "!plano                       → lista todos os planos"
+          "!plano add basico 50 30 60   → cria plano basico: R$50, 30 dias, envio a cada 60 min",
+          "!plano add pro 90 30 30      → cria plano pro: R$90, 30 dias, envio a cada 30 min",
+          "!plano remove basico         → remove o plano basico",
+          "!plano                       → lista todos os planos e estado do Mercado Pago"
         ]
       }
     }
@@ -94,30 +78,29 @@
     "licencaKey": {
       "_info": "Chave de licença do bot (bot.json → licencaKey)",
       "formato": "POLAR-<payload>.<assinatura>",
-      "o_que_faz": "Valida se tens direito a usar o bot. Verificação offline via criptografia Ed25519 + verificação online periódica.",
-      "como_obter": "Compra um plano ao criador via !comprar no PV do bot de demonstração",
+      "o_que_faz": "Valida se tens direito a usar o bot. Verificação offline (Ed25519) + verificação online periódica.",
+      "como_obter": "Recebida automaticamente após a compra",
       "importante": "Pessoal e intransferível. Não partilhes nem alteres o número de WhatsApp sem avisar o suporte."
     },
 
     "geminiKey": {
       "_info": "API Key do Google Gemini (bot.json → geminiKey)",
-      "o_que_faz": "Permite ao bot responder com inteligência artificial (modelo Gemini 1.5 Flash) a mensagens no PV de não-donos",
-      "como_obter": "https://aistudio.google.com → Get API Key → Create API key (gratuito)",
-      "como_activar": "Coloca em config/bot.json e usa o comando !ia on no bot",
-      "custo": "A API Gemini 1.5 Flash tem uma camada gratuita generosa. Para uso normal de um bot não há custos.",
-      "privacidade": "As mensagens dos utilizadores são enviadas para os servidores do Google para processamento."
+      "o_que_faz": "Permite ao bot responder com inteligência artificial (Gemini 1.5 Flash) a mensagens no PV de não-donos.",
+      "como_obter": "https://aistudio.google.com → Get API Key → Create API key",
+      "como_activar": "Coloca em config/bot.json e usa o comando !ia on",
+      "custo": "A API Gemini 1.5 Flash tem camada gratuita generosa — uso normal não tem custos.",
+      "privacidade": "As mensagens são enviadas para servidores Google para processamento."
     },
 
     "mp_token_dono": {
-      "_info": "Mercado Pago Access Token do DONO (configurado via !mptoken no bot)",
+      "_info": "Mercado Pago Access Token do dono (configurado via !mptoken no bot)",
       "o_que_faz": "Permite ao bot gerar QR codes Pix e detectar pagamentos automaticamente para os planos de divulgação (!plano).",
-      "como_configurar": "Usa o comando !mptoken APP_USR-... no bot. O token é guardado na base de dados local.",
+      "como_configurar": "Usa o comando !mptoken APP_USR-... directamente no bot. O token fica guardado de forma segura.",
       "como_obter": [
-        "1. Acede a https://mercadopago.com.br",
-        "2. Inicia sessão na tua conta",
-        "3. Menu lateral → Credenciais",
-        "4. Selecciona 'Produção' (não 'Teste')",
-        "5. Copia o Access Token (começa com APP_USR-)"
+        "1. Acede a https://mercadopago.com.br e inicia sessão",
+        "2. Menu lateral → Credenciais",
+        "3. Selecciona 'Produção' (NÃO 'Teste')",
+        "4. Copia o Access Token (começa com APP_USR-)"
       ],
       "formato": "APP_USR-1234567890abcdef-MMDDYYYY-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-NNNNNNN",
       "importante": [
@@ -126,24 +109,6 @@
         "Usa sempre o token de Produção, nunca o de Teste"
       ],
       "o_que_acontece_sem": "Sem token, o bot mostra a chave Pix manual e diz ao cliente para entrar em contacto. Tens de activar o plano manualmente."
-    },
-
-    "mp_token_criador": {
-      "_info": "Mercado Pago Access Token do CRIADOR (hardcoded em src/licenca.js — apenas o criador preenche)",
-      "o_que_faz": "Permite ao bot gerar QR codes Pix e detectar pagamentos automaticamente quando alguém compra o arquivo (!comprar).",
-      "como_configurar": [
-        "1. Abre src/licenca.js",
-        "2. Localiza a linha: const _MPT = ''",
-        "3. Preenche com o token DIVIDIDO em partes (para dificultar extracção após obfuscação):",
-        "   const _MPT = ['APP_USR-', '12345678', '90abcdef', '-...'].join('')",
-        "4. Faz build/ofuscação antes de distribuir"
-      ],
-      "importante": [
-        "Este token fica embutido no código distribuído (ofuscado)",
-        "Divide SEMPRE em 4+ partes para dificultar extracção",
-        "Se for comprometido, regenera nas Credenciais do MP e faz novo build"
-      ],
-      "o_que_acontece_sem": "Sem token, o fluxo !comprar mostra a chave Pix do loja.json e diz ao comprador para contactar. Tens de fazer !addkey manualmente após confirmar o pagamento."
     }
   },
 
@@ -151,7 +116,7 @@
     "_info": "Referência rápida de todos os comandos por categoria",
 
     "divulgacao": [
-      "!divulgar [texto]       — envia para todos os grupos activos",
+      "!divulgar [texto]       — envia para todos os grupos activos (ou faz reply a media)",
       "!agendar HH:MM [texto]  — agenda envio diário a uma hora",
       "!intervalo <min> [text] — envia de X em X minutos",
       "!pausar                 — pausa todos os agendamentos",
@@ -168,63 +133,48 @@
       "!grupos todos           — toggle: divulgar para TODOS os grupos"
     ],
 
-    "venda_divulgacao": [
-      "!plano                  — listar planos de divulgação",
+    "planos_divulgacao": [
+      "!plano                           — listar planos e estado do MP",
       "!plano add <key> <R$> <dias> <min> — criar plano",
-      "!plano remove <key>     — remover plano",
-      "!mptoken <token>        — configurar Mercado Pago",
-      "!clientes_div           — ver clientes activos + dias restantes",
-      "!expulsar <numero>      — cancelar cliente e agendamento"
+      "!plano remove <key>              — remover plano",
+      "!mptoken <ACCESS_TOKEN>          — configurar Mercado Pago",
+      "!clientes_div                    — ver clientes activos + dias restantes",
+      "!expulsar <numero>               — cancelar cliente e agendamento"
     ],
 
     "configuracoes": [
       "!config                 — ver todas as opções",
-      "!autoentrar on/off      — entrar em grupos via link",
-      "!autosair on/off        — sair de grupos fechados",
+      "!autoentrar on/off      — entrar em grupos via link (padrão: ON)",
+      "!autosair on/off        — sair de grupos fechados (padrão: ON)",
       "!ia on/off              — IA no PV para não-donos",
-      "!pv on/off              — bot responde no PV",
+      "!pv on/off              — bot responde no PV (padrão: ON)",
       "!pv notificar on/off    — receber aviso de msgs no PV",
-      "!limite <numero>        — máximo de grupos",
+      "!limite <numero>        — máximo de grupos (padrão: 200)",
       "!status                 — estado completo do bot",
       "!renovar                — como renovar a licença"
-    ],
-
-    "criador_apenas": [
-      "!addkey <numero> <plano>— gerar licença + enviar bot.json ao comprador",
-      "!addkey @pessoa <plano> — mesmo com @mention",
-      "!revogar <keyId>        — revogar licença",
-      "!clientes               — listar todos os compradores do arquivo"
-    ],
-
-    "publicos_sem_permissao": [
-      "!comprar [plano]        — comprar o arquivo do bot",
-      "!plano [plano]          — comprar plano de divulgação"
     ]
   },
 
-  "fluxos": {
-    "compra_arquivo_automatica": [
-      "1. Comprador envia !comprar 30dias no PV do bot",
-      "2. Bot mostra termos (preço, requisitos, regras de licença)",
-      "3. Comprador responde 'aceito'",
-      "4. Bot gera QR code Pix via Mercado Pago e mostra o código copia-e-cola",
-      "5. Comprador paga no banco",
-      "6. Bot detecta o pagamento automaticamente (até 30 min)",
-      "7. Bot gera a licença via API",
-      "8. Bot envia bot.json pré-configurado ao comprador automaticamente",
-      "9. Comprador substitui config/bot.json e arranca o bot"
-    ],
-    "compra_divulgacao_automatica": [
+  "fluxo_cliente_divulgacao": {
+    "_info": "O que acontece quando um cliente compra um plano de divulgação",
+    "passos": [
       "1. Cliente envia !plano basico no PV do bot",
-      "2. Bot mostra termos (preço, dias, intervalo de envio)",
+      "2. Bot mostra os termos (preço, dias, intervalo de envio)",
       "3. Cliente responde 'aceito'",
-      "4. Bot gera QR code Pix via Mercado Pago do dono",
+      "4. Bot gera QR code Pix via Mercado Pago e mostra o código copia-e-cola",
       "5. Cliente paga no banco",
-      "6. Bot detecta o pagamento automaticamente",
-      "7. Bot pede ao cliente que envie a mensagem/mídia a divulgar",
-      "8. Cliente envia o conteúdo (texto, imagem, vídeo, documento)",
-      "9. Bot cria agendamento recorrente: envia a cada X minutos durante Y dias",
-      "10. No final do período, o agendamento é cancelado automaticamente"
+      "6. Bot detecta o pagamento automaticamente (sonda a cada 15 seg, até 30 min)",
+      "7. Bot confirma e pede ao cliente que envie a mensagem/mídia a divulgar",
+      "8. Cliente envia o conteúdo (texto, imagem, vídeo ou documento)",
+      "9. Bot cria agendamento: envia o conteúdo a cada X minutos durante Y dias",
+      "10. No fim do período, o agendamento é cancelado automaticamente"
+    ],
+    "sem_mercado_pago": [
+      "1-3. Mesmo que acima",
+      "4. Bot mostra a chave Pix do loja.json e diz para entrar em contacto",
+      "5. Cliente paga e avisa o dono",
+      "6. Dono verifica o pagamento manualmente",
+      "7. Dono usa !mptoken para configurar MP e o cliente tenta novamente, OU activa manualmente noutra forma"
     ]
   }
 }
