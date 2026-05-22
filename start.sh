@@ -124,7 +124,7 @@ verificar_deps() {
   if [ ! -d "node_modules" ]; then
     echo -e "${YELLOW}  ↓  Primeira instalação (Node ${NODE_VER})...${NC}"
     npm install --no-fund --no-audit 2>&1 | grep -v "^npm warn"
-    echo -e "${GREEN}  ✓  Dependências instaladas!${NC}"
+    _compilar_sqlite
     return
   fi
 
@@ -138,7 +138,7 @@ verificar_deps() {
     echo -e "${YELLOW}  ↗  Dependências actualizadas — a instalar...${NC}"
     npm install --no-fund --no-audit 2>&1 | grep -v "^npm warn"
     echo "$PKG_HASH" > "$PKG_HASH_FILE"
-    echo -e "${GREEN}  ✓  Dependências instaladas!${NC}"
+    _compilar_sqlite
     return
   fi
 
