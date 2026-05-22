@@ -1,0 +1,14 @@
+{
+  "planos": {
+    "30dias":  { "nome": "Bot 30 dias",  "preco": 25,  "dias": 30  },
+    "90dias":  { "nome": "Bot 90 dias",  "preco": 60,  "dias": 90  },
+    "180dias": { "nome": "Bot 180 dias", "preco": 100, "dias": 180 }
+  },
+  "planos_divulgacao": {
+    "basico": { "nome": "Divulgação Básico", "preco": 50,  "dias": 30, "intervalo": 60 },
+    "pro":    { "nome": "Divulgação Pro",    "preco": 90,  "dias": 30, "intervalo": 30 },
+    "ultra":  { "nome": "Divulgação Ultra",  "preco": 150, "dias": 30, "intervalo": 15 }
+  },
+  "contacto": "",
+  "pixKey":   ""
+}
