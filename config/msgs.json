@@ -1,0 +1,8 @@
+{
+  "ajuda": "╔══════════════════════════╗\n║   🤖 BOT DIVULGAÇÃO      ║\n╚══════════════════════════╝\n\n📢 *Comandos de Divulgação*\n!divulgar [texto] — divulga mensagem\n!agendar HH:MM [texto] — agenda envio\n!intervalo <mins> [texto] — envio periódico\n!pausar / !retomar / !cancelar\n\n👥 *Grupos*\n!grupos — lista todos os grupos\n!grupos add <id> — adiciona à divulgação\n!grupos remove <id> — remove da divulgação\n!grupos todos — toggle todos os grupos\n!grupos lista — grupos seleccionados\n\n⚙️ *Configurações*\n!config — ver todas as opções\n!autoentrar on/off\n!autosair on/off\n!ia on/off\n!limite <numero>\n!status — estado do bot\n!historico — últimos envios\n!renovar — renovar licença",
+  "loja": "🏪 *Planos Disponíveis*\n\nEntre em contacto para adquirir:\n{contacto}\n\nPagamento via Pix: {pixKey}",
+  "renovar": "🔄 *Renovar Licença*\n\nA tua licença está prestes a expirar ou já expirou.\nContacta o suporte para renovar:\n{contacto}",
+  "boasVindas": "👋 Olá! Sou o Bot de Divulgação.\nDigita !ajuda para ver os comandos disponíveis.\nDigita !loja para ver os planos.",
+  "semPermissao": "❌ Não tens permissão para usar este comando.",
+  "semLicenca": "🔒 Licença inválida ou expirada. Usa !renovar para obter ajuda."
+}

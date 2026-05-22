@@ -1,0 +1,21 @@
+{
+  "name": "bot-divulgacao",
+  "version": "1.0.0",
+  "description": "Bot de divulgação em massa para WhatsApp",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "bash start.sh",
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@whiskeysockets/baileys": "6.7.21",
+    "axios": "^1.7.2",
+    "better-sqlite3": "^12.9.0",
+    "colors": "^1.4.0",
+    "node-cache": "^5.1.2",
+    "pino": "^9.2.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

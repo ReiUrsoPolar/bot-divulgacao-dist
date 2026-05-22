@@ -1,2 +1,2 @@
-# bot-divulgacao-dist
-Bot de divulgacao - distribuicao publica
+# bot-divulgacao
+Bot de divulgacao - codigo fonte
