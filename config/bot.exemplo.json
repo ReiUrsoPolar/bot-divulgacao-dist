@@ -1,9 +1,11 @@
 {
   "_info": "Copia este ficheiro para bot.json e preenche os campos abaixo. Apaga esta linha _info.",
-  "numero":     "NUMERO_DO_BOT (ex: 351912345678, sem + ou espaços)",
-  "licencaKey": "POLAR-xxxx (chave recebida após a compra)",
-  "geminiKey":  "AIzaSy... (opcional — obtém em aistudio.google.com para activar !ia on)",
-  "dono":       "NUMERO_DO_DONO (quem tem acesso aos comandos !)",
-  "nomeBot":    "Bot Divulgação",
-  "prefix":     "!"
+  "numero":          "NUMERO_DO_BOT (ex: 351912345678, sem + ou espaços)",
+  "licencaKey":      "POLAR-xxxx (chave recebida após a compra)",
+  "dono":            "NUMERO_DO_DONO (quem tem acesso aos comandos !)",
+  "nomeBot":         "Bot Divulgação",
+  "prefix":          "!",
+  "metodo_conexao":  "qr",
+  "_metodo_info":    "Método de ligação ao WhatsApp: 'qr' (default) ou 'codigo' (código de emparelhamento pelo número do dono)",
+  "geminiKey":       "AIzaSy... (opcional — obtém em aistudio.google.com para activar !ia on)"
 }
