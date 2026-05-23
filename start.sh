@@ -146,8 +146,10 @@ verificar_deps() {
   fi
 
   # ── better-sqlite3 compilado para este Node? ────────────────────────
+  # ATENÇÃO: require() sozinho não carrega o binário nativo — só new Database() o faz.
+  # Por isso testamos com ':memory:' para garantir que o .node é compatível com este Node.
   SQLITE_OK=$(node -e \
-    "try{require('./node_modules/better-sqlite3');process.stdout.write('ok')}catch(e){process.stdout.write('no')}" \
+    "try{const B=require('./node_modules/better-sqlite3');new B(':memory:');process.stdout.write('ok')}catch(e){process.stdout.write('no')}" \
     2>/dev/null)
 
   if [ "$SQLITE_OK" != "ok" ]; then
