@@ -8,7 +8,8 @@
     "start": "bash start.sh",
     "dev":   "node --env-file=.env index.js",
     "build": "node build/build.js",
-    "publish": "node build/build.js --push"
+    "publish": "node build/build.js --push",
+    "postinstall": "node -e \"const fs=require('fs');const f='node_modules/@whiskeysockets/baileys/lib/Socket/messages-send.js';function p(d,o,n){try{let c=fs.readFileSync(f,'utf8');if(c.includes(n)){console.log('[patch] OK:',d);return}if(!c.includes(o)){console.log('[patch] miss:',d);return}fs.writeFileSync(f,c.replace(o,n),'utf8');console.log('[patch] Applied:',d)}catch(e){console.log('[patch] skip:',d,e.message)}}p('lid.split','me?.lid.split(','me?.lid?.split(');\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

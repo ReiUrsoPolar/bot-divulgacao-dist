@@ -175,6 +175,27 @@ while true; do
   verificar_deps
 
   echo -e "\n${GREEN}  🚀  A iniciar Bot Divulgação...${NC}\n"
+
+  # ── Garantir patches correctos do Baileys (am:lid + participantes @lid) ──
+  node << 'PATCH_EOF'
+const fs=require('fs');
+const f='node_modules/@whiskeysockets/baileys/lib/Socket/messages-send.js';
+try {
+  let c=fs.readFileSync(f,'utf8');
+  function fix(d,p,o){if(c.includes(o))return;if(!c.includes(p))return;c=c.replace(p,o);console.log('  [patch]',d);}
+  fix('am1','if (isLid && isGroup) { additionalAttributes = { ...(additionalAttributes || {}), addressing_mode: \'lid\' }; }',
+            'if (isLid) { additionalAttributes = { ...(additionalAttributes || {}), addressing_mode: \'lid\' }; }');
+  fix('am2','if(isLid && isGroup){additionalAttributes={...(additionalAttributes||{}),addressing_mode:\'lid\'}}',
+            'if(isLid){additionalAttributes={...(additionalAttributes||{}),addressing_mode:\'lid\'}}');
+  fix('am3','if(isLid && isGroup && !(additionalAttributes||{}).addressing_mode)',
+            'if(isLid && !(additionalAttributes||{}).addressing_mode)');
+  fix('fr', 'await assertSessions(allJids, isLid);','await assertSessions(allJids, false);');
+  fix('nsl','if (isMe && !isLid) {\n                        meJids.push(jid);\n                        allJids.push(jid);\n                    }\n                    else if (!isMe) {\n                        otherJids.push(jid);\n                        allJids.push(jid);\n                    }',
+            'if (isMe) {\n                        meJids.push(jid);\n                    }\n                    else {\n                        otherJids.push(jid);\n                    }\n                    allJids.push(jid);');
+  fs.writeFileSync(f,c,'utf8');
+} catch(e){ console.error('  [patch error]',e.message); }
+PATCH_EOF
+
   node $NODE_ENV_FLAG index.js
   EXIT_CODE=$?
 
