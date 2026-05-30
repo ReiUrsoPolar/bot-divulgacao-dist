@@ -7,7 +7,9 @@
   "prefix":          "!",
   "metodo_conexao":  "qr",
   "_metodo_info":    "Método de ligação ao WhatsApp: 'qr' (default) ou 'codigo' (código de emparelhamento pelo número do dono)",
-  "geminiKey":       "AIzaSy... (opcional — obtém em aistudio.google.com para activar !ia on)",
+  "geminiKey":       "AIzaSy... (opcional — IA via Google Gemini, aistudio.google.com)",
+  "groqKey":         "",
+  "_groqKey_info":   "Key da IA Groq (recomendada — mais rápida e gratuita). Obtém em console.groq.com/keys. Se ambas existirem, o Groq é usado primeiro. Ativa as respostas no PV com !ia on.",
   "mpToken":         "",
   "_mpToken_info":   "Token do Mercado Pago para receber pagamentos Pix automáticos da divulgação (opcional). Obtém em mercadopago.com.br → Credenciais → Access Token. Também podes configurar pelo WhatsApp com !mptoken <token>."
 }
