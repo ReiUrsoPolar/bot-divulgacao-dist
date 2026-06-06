@@ -183,12 +183,15 @@ const f='node_modules/@whiskeysockets/baileys/lib/Socket/messages-send.js';
 try {
   let c=fs.readFileSync(f,'utf8');
   function fix(d,p,o){if(c.includes(o))return;if(!c.includes(p))return;c=c.replace(p,o);console.log('  [patch]',d);}
-  fix('am1','if (isLid && isGroup) { additionalAttributes = { ...(additionalAttributes || {}), addressing_mode: \'lid\' }; }',
-            'if (isLid) { additionalAttributes = { ...(additionalAttributes || {}), addressing_mode: \'lid\' }; }');
-  fix('am2','if(isLid && isGroup){additionalAttributes={...(additionalAttributes||{}),addressing_mode:\'lid\'}}',
-            'if(isLid){additionalAttributes={...(additionalAttributes||{}),addressing_mode:\'lid\'}}');
-  fix('am3','if(isLid && isGroup && !(additionalAttributes||{}).addressing_mode)',
-            'if(isLid && !(additionalAttributes||{}).addressing_mode)');
+  // REVERT addressing_mode em PV -> volta ao vanilla (so GRUPOS), como o Polar.
+  // addressing_mode:'lid' num PV dispara o erro 463 (reach-out timelock): o
+  // servidor trata como "abordar desconhecido". Em PV NAO se marca lid.
+  fix('am1-rev','if (isLid) { additionalAttributes = { ...(additionalAttributes || {}), addressing_mode: \'lid\' }; }',
+                'if (isLid && isGroup) { additionalAttributes = { ...(additionalAttributes || {}), addressing_mode: \'lid\' }; }');
+  fix('am2-rev','if(isLid){additionalAttributes={...(additionalAttributes||{}),addressing_mode:\'lid\'}}',
+                'if(isLid && isGroup){additionalAttributes={...(additionalAttributes||{}),addressing_mode:\'lid\'}}');
+  fix('am3-rev','if(isLid && !(additionalAttributes||{}).addressing_mode)',
+                'if(isLid && isGroup && !(additionalAttributes||{}).addressing_mode)');
   fix('fr', 'await assertSessions(allJids, isLid);','await assertSessions(allJids, false);');
   fix('nsl','if (isMe && !isLid) {\n                        meJids.push(jid);\n                        allJids.push(jid);\n                    }\n                    else if (!isMe) {\n                        otherJids.push(jid);\n                        allJids.push(jid);\n                    }',
             'if (isMe) {\n                        meJids.push(jid);\n                    }\n                    else {\n                        otherJids.push(jid);\n                    }\n                    allJids.push(jid);');
