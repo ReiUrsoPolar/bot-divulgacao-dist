@@ -1,180 +1,63 @@
 {
-  "_info": "Este ficheiro documenta todas as configurações do Bot Divulgação. Não é lido pelo bot — serve apenas como referência.",
+  "_INFO": "Referência das configurações do Bot Divulgação. Este ficheiro NÃO é lido pelo bot — serve só para consulta.",
 
-  "bot_json": {
-    "_info": "Ficheiro principal de configuração — config/bot.json",
-    "_nota": "Nunca partilhes este ficheiro. Contém a tua licença e configurações pessoais.",
-    "campos": {
-      "numero": {
-        "desc": "Número de WhatsApp do bot (apenas dígitos, sem + ou espaços)",
-        "exemplo": "351912345678",
-        "obrigatorio": true
-      },
-      "licencaKey": {
-        "desc": "Chave de licença recebida após a compra. Começa sempre com POLAR-",
-        "exemplo": "POLAR-eyJleHAiOjE3...",
-        "obrigatorio": true
-      },
-      "geminiKey": {
-        "desc": "API Key do Google Gemini para respostas com IA no PV. Só precisas se quiseres activar !ia on.",
-        "exemplo": "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-        "onde_obter": "https://aistudio.google.com → Get API Key → Create API key (gratuito)",
-        "obrigatorio": false
-      },
-      "dono": {
-        "desc": "Número de WhatsApp do dono do bot — tem acesso a todos os comandos !",
-        "exemplo": "351912345678",
-        "obrigatorio": true
-      },
-      "nomeBot": {
-        "desc": "Nome do bot — aparece nos logs",
-        "exemplo": "Bot Divulgação",
-        "obrigatorio": false
-      },
-      "prefix": {
-        "desc": "Prefixo dos comandos. Padrão recomendado: !",
-        "exemplo": "!",
-        "obrigatorio": false
-      }
+  "ficheiros_da_pasta_config": {
+    "bot.json": "A TUA configuração (criado automaticamente na 1ª execução). Preenche e nunca partilhes — contém a licença.",
+    "bot.exemplo.json": "Exemplo/modelo dos campos do bot.json.",
+    "loja.json": "Os teus planos de divulgação + chave Pix manual.",
+    "msgs.json": "Mensagens personalizáveis (opcional).",
+    "configuracao.json": "Este ficheiro — referência."
+  },
+
+  "bot.json": {
+    "numero":     "Número do bot, só dígitos (ex: 351912345678) — OBRIGATÓRIO",
+    "licencaKey": "Chave recebida na compra, começa por POLAR- — OBRIGATÓRIO",
+    "dono":       "O teu número (acesso a todos os comandos !) — OBRIGATÓRIO",
+    "nomeBot":    "Nome do bot (opcional)",
+    "prefix":     "Prefixo dos comandos (padrão: !)",
+    "geminiKey":  "IA via Google Gemini (opcional) — aistudio.google.com/apikey",
+    "groqKey":    "IA via Groq, recomendada: mais rápida e gratuita (opcional) — console.groq.com/keys. Se ambas existirem, usa-se o Groq.",
+    "mpToken":    "Mercado Pago Access Token para Pix automático (opcional) — também se define com !mptoken"
+  },
+
+  "loja.json": {
+    "pixKey": "Chave Pix para pagamento manual (quando não há Mercado Pago)",
+    "planos_divulgacao": "Os planos que vendes. Geridos por !plano (não precisas de editar à mão).",
+    "dois_modelos_de_plano": {
+      "por_tempo":  "Envios contínuos durante X dias. Cria com: !plano add <key> <preco> <dias> <envios_por_dia>",
+      "por_ciclos": "Nº fixo de divulgações; termina ao atingir o total. Cria com: !plano addciclos <key> <preco> <ciclos> <intervalo_min>"
     }
   },
 
-  "loja_json": {
-    "_info": "Ficheiro de planos e pagamento — config/loja.json",
-    "_nota": "Podes editar directamente aqui ou usar os comandos !plano add/remove no bot.",
-    "campos": {
-      "pixKey": {
-        "desc": "Chave Pix para receber pagamentos manuais (quando Mercado Pago não está configurado). Pode ser CPF, email, telefone ou chave aleatória.",
-        "exemplo": "12345678900"
-      },
-      "planos_divulgacao": {
-        "desc": "Planos de divulgação que vendes aos teus clientes. Cada cliente usa !plano <key> no PV do bot.",
-        "estrutura": {
-          "<key>": {
-            "nome": "Nome legível do plano (aparece nas mensagens)",
-            "preco": "Preço em R$ (número)",
-            "dias": "Duração do plano em dias (número)",
-            "intervalo": "De quantos em quantos MINUTOS o bot envia o conteúdo do cliente para os grupos (número)"
-          }
-        },
-        "exemplo": {
-          "basico": { "nome": "Básico", "preco": 50,  "dias": 30, "intervalo": 60 },
-          "pro":    { "nome": "Pro",    "preco": 90,  "dias": 30, "intervalo": 30 },
-          "ultra":  { "nome": "Ultra",  "preco": 150, "dias": 30, "intervalo": 15 }
-        },
-        "como_gerir_via_bot": [
-          "!plano add basico 50 30 60   → cria plano basico: R$50, 30 dias, envio a cada 60 min",
-          "!plano add pro 90 30 30      → cria plano pro: R$90, 30 dias, envio a cada 30 min",
-          "!plano remove basico         → remove o plano basico",
-          "!plano                       → lista todos os planos e estado do Mercado Pago"
-        ]
-      }
-    }
+  "precos_do_arquivo": {
+    "_nota": "FIXOS no código (só o criador altera). Quanto maior o plano, mais barato por mês.",
+    "mensal":     "R$ 15  · 30 dias  (R$ 15/mês)",
+    "trimestral": "R$ 36  · 90 dias  (R$ 12/mês)",
+    "semestral":  "R$ 60  · 180 dias (R$ 10/mês)",
+    "anual":      "R$ 96  · 365 dias (R$ 8/mês)"
   },
 
-  "tokens": {
-    "_info": "Explicação de todos os tokens e chaves usadas pelo bot",
-
-    "licencaKey": {
-      "_info": "Chave de licença do bot (bot.json → licencaKey)",
-      "formato": "POLAR-<payload>.<assinatura>",
-      "o_que_faz": "Valida se tens direito a usar o bot. Verificação offline (Ed25519) + verificação online periódica.",
-      "como_obter": "Recebida automaticamente após a compra",
-      "importante": "Pessoal e intransferível. Não partilhes nem alteres o número de WhatsApp sem avisar o suporte."
-    },
-
-    "geminiKey": {
-      "_info": "API Key do Google Gemini (bot.json → geminiKey)",
-      "o_que_faz": "Permite ao bot responder com inteligência artificial (Gemini 1.5 Flash) a mensagens no PV de não-donos.",
-      "como_obter": "https://aistudio.google.com → Get API Key → Create API key",
-      "como_activar": "Coloca em config/bot.json e usa o comando !ia on",
-      "custo": "A API Gemini 1.5 Flash tem camada gratuita generosa — uso normal não tem custos.",
-      "privacidade": "As mensagens são enviadas para servidores Google para processamento."
-    },
-
-    "mp_token_dono": {
-      "_info": "Mercado Pago Access Token do dono (configurado via !mptoken no bot)",
-      "o_que_faz": "Permite ao bot gerar QR codes Pix e detectar pagamentos automaticamente para os planos de divulgação (!plano).",
-      "como_configurar": "Usa o comando !mptoken APP_USR-... directamente no bot. O token fica guardado de forma segura.",
-      "como_obter": [
-        "1. Acede a https://mercadopago.com.br e inicia sessão",
-        "2. Menu lateral → Credenciais",
-        "3. Selecciona 'Produção' (NÃO 'Teste')",
-        "4. Copia o Access Token (começa com APP_USR-)"
-      ],
-      "formato": "APP_USR-1234567890abcdef-MMDDYYYY-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-NNNNNNN",
-      "importante": [
-        "Nunca partilhes este token — dá acesso total à tua conta MP",
-        "Se suspeitas de comprometimento, regenera nas Credenciais do MP",
-        "Usa sempre o token de Produção, nunca o de Teste"
-      ],
-      "o_que_acontece_sem": "Sem token, o bot mostra a chave Pix manual e diz ao cliente para entrar em contacto. Tens de activar o plano manualmente."
-    }
+  "comandos_principais": {
+    "divulgar": ["!divulgar [texto]  (curto: !d)", "!agendar HH:MM [texto]  (!ag)", "!intervalo <min> [texto]  (!i)", "!pausar / !retomar / !cancelar", "!fila  (!f)"],
+    "grupos":   ["!grupos  (!g) — sincronizar", "!grupos lista", "!grupos todos", "!limite <n>"],
+    "vender":   ["!plano — gerir planos (tempo/ciclos)", "!clientes_div  (!cli)", "!relatorio <nº>  (!rel)", "!proibir <palavra> / !proibidas / !desproibir", "!mptoken <token>", "!groqkey <key>"],
+    "criador":  ["!addkey <numero> <plano>", "!revogar <keyId>", "!clientes", "!confirmar <numero> <plano>", "!confirmar_div <numero> <plano>"],
+    "config":   ["!status  (!s)", "!pv on/off — auto-resposta a estranhos", "!ia on/off — IA no PV (key: !iakey)", "!autoentrar on/off", "!autosair on/off", "!aceitarlinks on/off"]
   },
 
-  "comandos_resumo": {
-    "_info": "Referência rápida de todos os comandos por categoria",
-
-    "divulgacao": [
-      "!divulgar [texto]       — envia para todos os grupos activos (ou faz reply a media)",
-      "!agendar HH:MM [texto]  — agenda envio diário a uma hora",
-      "!intervalo <min> [text] — envia de X em X minutos",
-      "!pausar                 — pausa todos os agendamentos",
-      "!retomar                — retoma todos os agendamentos",
-      "!cancelar [id]          — cancela um ou todos os agendamentos",
-      "!historico              — últimos envios (grupos atingidos, erros)"
-    ],
-
-    "grupos": [
-      "!grupos                 — sincronizar e listar grupos",
-      "!grupos lista           — grupos seleccionados para divulgação",
-      "!grupos add <id>        — adicionar grupo",
-      "!grupos remove <id>     — remover grupo",
-      "!grupos todos           — toggle: divulgar para TODOS os grupos"
-    ],
-
-    "planos_divulgacao": [
-      "!plano                           — listar planos e estado do MP",
-      "!plano add <key> <R$> <dias> <min> — criar plano",
-      "!plano remove <key>              — remover plano",
-      "!mptoken <ACCESS_TOKEN>          — configurar Mercado Pago",
-      "!clientes_div                    — ver clientes activos + dias restantes",
-      "!expulsar <numero>               — cancelar cliente e agendamento"
-    ],
-
-    "configuracoes": [
-      "!config                 — ver todas as opções",
-      "!autoentrar on/off      — entrar em grupos via link (padrão: ON)",
-      "!autosair on/off        — sair de grupos fechados (padrão: ON)",
-      "!ia on/off              — IA no PV para não-donos",
-      "!pv on/off              — bot responde no PV (padrão: ON)",
-      "!pv notificar on/off    — receber aviso de msgs no PV",
-      "!limite <numero>        — máximo de grupos (padrão: 200)",
-      "!status                 — estado completo do bot",
-      "!renovar                — como renovar a licença"
-    ]
+  "defaults_de_seguranca": {
+    "_nota": "Tudo desligado por omissão para reduzir risco de ban. Ligas o que quiseres.",
+    "pv_activo":     "OFF — bot não envia boas-vindas a estranhos (mas !comprar/!plano funcionam sempre)",
+    "ia_activa":     "OFF",
+    "autoentrar":    "OFF",
+    "autosair":      "OFF",
+    "max_por_envio": "40 grupos por broadcast"
   },
 
-  "fluxo_cliente_divulgacao": {
-    "_info": "O que acontece quando um cliente compra um plano de divulgação",
-    "passos": [
-      "1. Cliente envia !plano basico no PV do bot",
-      "2. Bot mostra os termos (preço, dias, intervalo de envio)",
-      "3. Cliente responde 'aceito'",
-      "4. Bot gera QR code Pix via Mercado Pago e mostra o código copia-e-cola",
-      "5. Cliente paga no banco",
-      "6. Bot detecta o pagamento automaticamente (sonda a cada 15 seg, até 30 min)",
-      "7. Bot confirma e pede ao cliente que envie a mensagem/mídia a divulgar",
-      "8. Cliente envia o conteúdo (texto, imagem, vídeo ou documento)",
-      "9. Bot cria agendamento: envia o conteúdo a cada X minutos durante Y dias",
-      "10. No fim do período, o agendamento é cancelado automaticamente"
-    ],
-    "sem_mercado_pago": [
-      "1-3. Mesmo que acima",
-      "4. Bot mostra a chave Pix do loja.json e diz para entrar em contacto",
-      "5. Cliente paga e avisa o dono",
-      "6. Dono verifica o pagamento manualmente",
-      "7. Dono usa !mptoken para configurar MP e o cliente tenta novamente, OU activa manualmente noutra forma"
-    ]
-  }
+  "dicas_anti_ban": [
+    "Usa um número COM histórico (nunca um chip novo/virtual — são banidos depressa).",
+    "Aquece o número uns dias com uso manual antes de o pôr no bot.",
+    "Mantém !pv off e broadcasts baixos (!maxenvio 40, intervalos largos).",
+    "Se apanhares timelock (erro 463), para o bot e deixa o número descansar 24-48h."
+  ]
 }
