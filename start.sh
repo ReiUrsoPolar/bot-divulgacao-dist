@@ -202,6 +202,13 @@ PATCH_EOF
   node $NODE_ENV_FLAG index.js
   EXIT_CODE=$?
 
+  # !atualizar (código 42) → re-executar o start.sh do INÍCIO. Necessário para
+  # reler o próprio start.sh (patches/am1-rev) e o código novo já feito git reset.
+  if [ $EXIT_CODE -eq 42 ]; then
+    echo -e "\n${CYAN}  🔄  Atualização pedida — a reiniciar por completo...${NC}\n"
+    exec bash "$0"
+  fi
+
   if [ $EXIT_CODE -eq 0 ]; then
     echo -e "\n${CYAN}  ✅  Bot encerrado normalmente.${NC}\n"
     break
