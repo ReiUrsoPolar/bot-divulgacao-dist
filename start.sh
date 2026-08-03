@@ -124,7 +124,7 @@ atualizar() {
       case "$_nome" in
         session|auth_info_baileys|database|node_modules|.tmp|.git) continue ;;
       esac
-      rm -rf "./$_nome" && cp -a "$_item" "./$_nome" || _COPIA_OK=0
+      rm -rf "./$_nome" && cp -r "$_item" "./$_nome" || _COPIA_OK=0
     done
     if [ "$_COPIA_OK" != "1" ]; then
       echo -e "${RED}  ✗  Falhou copiar alguns ficheiros — actualização NÃO marcada como feita.${NC}"
