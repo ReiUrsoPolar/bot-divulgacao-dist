@@ -6,12 +6,12 @@
   "main": "index.js",
   "scripts": {
     "start": "bash start.sh",
-    "dev":   "node --env-file=.env index.js",
+    "dev": "node --env-file=.env index.js",
     "build": "node build/build.js",
     "publish": "node build/build.js --push",
     "test": "vitest run",
     "scan": "node scripts/scan-secrets.mjs",
-    "postinstall": "node patches/baileys.cjs"
+    "postinstall": "node patches/baileys.cjs || true"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
