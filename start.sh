@@ -84,15 +84,53 @@ atualizar() {
     [ -d "auth_info_baileys" ] && cp -r "auth_info_baileys/." "$TMP_AUTH_DIR/"
     [ -d "database" ]          && cp -r "database" /tmp/bot_database_backup/
 
-    # Descarregar e extrair
-    curl -sL "$DIST_ZIP" -o /tmp/bot-update.zip
-    rm -rf /tmp/bot-update-extract
+    # Descarregar e extrair — com verificação a cada passo. Sem isto, uma falha
+    # passava despercebida e o hash era gravado na mesma (ver mais abaixo).
+    rm -rf /tmp/bot-update.zip /tmp/bot-update-extract
+    if ! curl -sfL "$DIST_ZIP" -o /tmp/bot-update.zip; then
+      echo -e "${RED}  ✗  Falhou descarregar a actualização.${NC}"
+      return 1
+    fi
     mkdir -p /tmp/bot-update-extract
-    unzip -q /tmp/bot-update.zip -d /tmp/bot-update-extract/
-    EXTRACTED=$(ls /tmp/bot-update-extract/ | head -1)
+    if ! command -v unzip >/dev/null 2>&1; then
+      echo -e "${RED}  ✗  'unzip' não existe neste servidor — não dá para actualizar por download.${NC}"
+      return 1
+    fi
+    if ! unzip -qo /tmp/bot-update.zip -d /tmp/bot-update-extract/; then
+      echo -e "${RED}  ✗  Zip inválido.${NC}"
+      return 1
+    fi
 
-    # Copiar para o directório actual (preserva config/bot.json e auth)
-    cp -r "/tmp/bot-update-extract/${EXTRACTED}/." ./
+    # A primeira entrada podia ser um FICHEIRO (.gitattributes vem antes por
+    # ordem alfabética) e a cópia ia buscar a pasta errada. Escolhe-se a
+    # primeira que É mesmo uma pasta.
+    EXTRACTED=""
+    for _e in /tmp/bot-update-extract/*; do
+      [ -d "$_e" ] && { EXTRACTED=$(basename "$_e"); break; }
+    done
+    if [ -z "$EXTRACTED" ]; then
+      echo -e "${RED}  ✗  Zip extraído sem pasta lá dentro.${NC}"
+      return 1
+    fi
+
+    # Copiar entrada a entrada, removendo o destino primeiro. O `cp -r` de antes
+    # rebentava quando o destino tinha o TIPO trocado (pasta onde devia estar um
+    # ficheiro, resto de um update interrompido) — era o "ENOTDIR: not a
+    # directory, scandir .../patches/baileys.cjs". O rm -rf não quer saber do tipo.
+    _COPIA_OK=1
+    for _item in "/tmp/bot-update-extract/${EXTRACTED}"/* "/tmp/bot-update-extract/${EXTRACTED}"/.[!.]*; do
+      [ -e "$_item" ] || continue
+      _nome=$(basename "$_item")
+      case "$_nome" in
+        session|auth_info_baileys|database|node_modules|.tmp|.git) continue ;;
+      esac
+      rm -rf "./$_nome" && cp -a "$_item" "./$_nome" || _COPIA_OK=0
+    done
+    if [ "$_COPIA_OK" != "1" ]; then
+      echo -e "${RED}  ✗  Falhou copiar alguns ficheiros — actualização NÃO marcada como feita.${NC}"
+      rm -rf /tmp/bot-update.zip /tmp/bot-update-extract
+      return 1
+    fi
 
     # Restaurar ficheiros do cliente
     [ -s "$TMP_BOT_JSON" ]     && cp "$TMP_BOT_JSON" "config/bot.json"
@@ -103,6 +141,11 @@ atualizar() {
     rm -rf /tmp/bot-update.zip /tmp/bot-update-extract \
            "$TMP_BOT_JSON" "$TMP_AUTH_DIR" /tmp/bot_database_backup
 
+    # SÓ agora se grava o hash. Antes era gravado a seguir à cópia sem qualquer
+    # verificação: bastava uma falha (sem unzip, sem rede, ENOTDIR na cópia) para
+    # o ficheiro passar a dizer "já estou na versão mais recente" — e o bot nunca
+    # mais tentava actualizar. Ficava preso na versão velha para sempre, em
+    # silêncio. Era isto o "o start.sh não está a actualizar".
     echo "$REMOTE_HASH" > "$HASH_FILE"
     echo -e "${GREEN}  ✓  Actualizado para ${REMOTE_HASH}!${NC}"
 
