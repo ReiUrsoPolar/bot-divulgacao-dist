@@ -123,6 +123,20 @@ atualizar() {
       _nome=$(basename "$_item")
       case "$_nome" in
         session|auth_info_baileys|database|node_modules|.tmp|.git) continue ;;
+        config)
+          # A pasta config NUNCA é apagada. Tem o bot.json com a CHAVE DE
+          # LICENÇA do cliente — apagá-la e falhar a restaurar deixa-o sem bot.
+          # Copiam-se só os ficheiros novos que não são dele.
+          mkdir -p ./config
+          for _cf in "$_item"/*; do
+            [ -e "$_cf" ] || continue
+            _cn=$(basename "$_cf")
+            case "$_cn" in
+              bot.json|loja.json|licenca-bind.json|licenca-inst.json) continue ;;
+            esac
+            rm -rf "./config/$_cn" && cp -r "$_cf" "./config/$_cn" || _COPIA_OK=0
+          done
+          continue ;;
       esac
       rm -rf "./$_nome" && cp -r "$_item" "./$_nome" || _COPIA_OK=0
     done
