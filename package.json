@@ -17,7 +17,6 @@
     "@google/generative-ai": "^0.21.0",
     "@whiskeysockets/baileys": "6.7.21",
     "axios": "^1.7.2",
-    "better-sqlite3": "^12.9.0",
     "colors": "^1.4.0",
     "node-cache": "^5.1.2",
     "pino": "^9.2.0",
@@ -26,5 +25,8 @@
   "devDependencies": {
     "javascript-obfuscator": "^5.4.3",
     "vitest": "^1.6.1"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^12.9.0"
   }
 }

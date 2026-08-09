@@ -171,10 +171,23 @@ atualizar() {
 # ══════════════════════════════════════════════════════════════════════
 # FASE 2 — DEPENDÊNCIAS
 # ══════════════════════════════════════════════════════════════════════
+_sqlite_funciona() {
+  # require() sozinho NÃO carrega o binário nativo — só new Database() o faz.
+  node -e "try{const B=require('./node_modules/better-sqlite3');new B(':memory:').close();process.stdout.write('ok')}catch(e){process.stdout.write('no')}" 2>/dev/null
+}
+
 _compilar_sqlite() {
   echo -e "${YELLOW}  ↓  A compilar better-sqlite3...${NC}"
   npm rebuild better-sqlite3 --no-fund 2>&1 | grep -v "^npm warn" || true
-  echo -e "${GREEN}  ✓  better-sqlite3 compilado!${NC}"
+  # Antes dizia-se "compilado!" mesmo quando falhava (o `|| true` engolia tudo).
+  # No Termux falha quase sempre — e a mensagem verde mandava a pessoa procurar
+  # o problema noutro sítio qualquer.
+  if [ "$(_sqlite_funciona)" = "ok" ]; then
+    echo -e "${GREEN}  ✓  better-sqlite3 compilado!${NC}"
+  else
+    echo -e "${YELLOW}  ⚠  better-sqlite3 não compilou nesta plataforma (normal no Termux).${NC}"
+    echo -e "${CYAN}     O bot vai usar o SQLite embutido no Node — funciona à mesma.${NC}"
+  fi
 }
 
 verificar_deps() {
@@ -203,13 +216,7 @@ verificar_deps() {
   fi
 
   # ── better-sqlite3 compilado para este Node? ────────────────────────
-  # ATENÇÃO: require() sozinho não carrega o binário nativo — só new Database() o faz.
-  # Por isso testamos com ':memory:' para garantir que o .node é compatível com este Node.
-  SQLITE_OK=$(node -e \
-    "try{const B=require('./node_modules/better-sqlite3');new B(':memory:');process.stdout.write('ok')}catch(e){process.stdout.write('no')}" \
-    2>/dev/null)
-
-  if [ "$SQLITE_OK" != "ok" ]; then
+  if [ "$(_sqlite_funciona)" != "ok" ]; then
     echo -e "${YELLOW}  ↗  better-sqlite3 precisa de recompilação (Node ${NODE_VER})...${NC}"
     _compilar_sqlite
   else
