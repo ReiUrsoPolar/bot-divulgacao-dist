@@ -50,7 +50,10 @@ function saida(cmd, args) {
   return r.status === 0 ? String(r.stdout ?? '').trim() : null
 }
 function temComando(cmd) {
-  return spawnSync(cmd, ['--version'], { encoding: 'utf8' }).status === 0
+  const r = spawnSync(cmd, ['--version'], { encoding: 'utf8' })
+  // Só o ENOENT diz "não existe". Ir pelo código de saída dava falsos negativos
+  // — o ffmpeg, por exemplo, não conhece o --version e sai com erro na mesma.
+  return !r.error
 }
 // O npm e o npx são ficheiros .cmd no Windows, e o Node só os corre através da
 // shell. Passar a linha inteira (em vez de comando + lista de argumentos) evita
@@ -225,6 +228,19 @@ function dormir(ms) {
   spawnSync(process.execPath, ['-e', `setTimeout(()=>{},${Math.max(0, ms | 0)})`])
 }
 
+/**
+ * No Termux faltam programas do sistema que o bot usa. Sem o git, a actualização automática cai para a descarga do arquivo — que
+ * também precisa de programas que podem não estar lá.
+ */
+function prepararTermux() {
+  if (!EH_TERMUX) return
+  const falta = ['git'].filter(c => !temComando(c))
+  if (!falta.length) return
+  log(C.amarelo, `  ↓  A instalar ${falta.join(' e ')} (só na primeira vez)...`)
+  correrShell('pkg update -y', { stdio: 'ignore' })
+  correrShell(`pkg install -y ${falta.join(' ')}`)
+}
+
 function aplicarPatches() {
   const p = join('patches', 'baileys.cjs')
   if (existsSync(p)) spawnSync(process.execPath, [p], { stdio: 'ignore' })
@@ -238,6 +254,7 @@ function principal() {
     log(C.cinza,    '     Corre este comando DENTRO da pasta do bot (a que tem o index.js).')
     process.exit(1)
   }
+  prepararTermux()
   autoAtualizar()
   verificarDeps()
   aplicarPatches()
