@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "bash start.sh",
+    "start": "node start.js",
+    "start:sh": "bash start.sh",
     "dev": "node --env-file=.env index.js",
     "build": "node build/build.js",
     "publish": "node build/build.js --push",

@@ -13,3 +13,7 @@ config/bot.json
 
 # Output do build/obfuscação
 dist/
+
+# Cópias de segurança do config: são do dono da máquina, nunca do repositório.
+config/*.bak
+config/bot.json.bak
