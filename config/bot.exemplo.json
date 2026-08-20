@@ -1,7 +1,8 @@
 {
   "_info": "Copia este ficheiro para bot.json e preenche os campos abaixo. Apaga esta linha _info.",
   "numero":          "NUMERO_DO_BOT (ex: 351912345678, sem + ou espaços)",
-  "licencaKey":      "POLAR-xxxx (chave recebida após a compra)",
+  "licencaKey":      "O_NOME_DA_TUA_LICENCA",
+  "_licencaKey_info": "Põe aqui o NOME da licença — é o que vem em destaque no email da compra, e o bot troca-o sozinho pela chave. Se preferires, também aceita a chave POLAR-... completa.",
   "dono":            "NUMERO_DO_DONO (quem tem acesso aos comandos !)",
   "nomeBot":         "Bot Divulgação",
   "prefix":          "!",
