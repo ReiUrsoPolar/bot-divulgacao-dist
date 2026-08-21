@@ -212,8 +212,24 @@ function verificarDeps() {
   if (!sqliteFunciona() && !binarioSqlite()) {
     if (EH_TERMUX) {
       log(C.amarelo, '  ⚠  O better-sqlite3 não compila no Termux — é normal.')
-      log(C.ciano,   '     O bot usa o SQLite embutido no Node. A continuar...\n')
-      return
+      // Antes dizia-se "o bot usa o SQLite embutido" e seguia-se em frente,
+      // SEM verificar que esse SQLite existe. Num Termux com nodejs-lts
+      // (Node 22.x) ele precisa de um flag e não está lá — o bot morria a
+      // seguir com um erro de módulo, depois de esta mensagem garantir que
+      // estava tudo bem. Agora experimenta-se.
+      const _r = spawnSync(process.execPath,
+        ['-e', "new (require('node:sqlite').DatabaseSync)(':memory:').close()"],
+        { encoding: 'utf8' })
+      if (_r.status === 0) {
+        log(C.ciano, '     O bot usa o SQLite embutido no Node. A continuar...\n')
+        return
+      }
+      log(C.vermelho, '  ✗  E o SQLite embutido também não está disponível neste Node.')
+      log(C.branco ?? C.ciano, `     O teu Node é o ${process.version}.`)
+      log(C.amarelo, '     Corre isto no Termux e volta a tentar:')
+      log(C.verde,   '       pkg upgrade nodejs')
+      log(C.cinza,   '     (se tiveres o nodejs-lts, troca-o: pkg uninstall nodejs-lts && pkg install nodejs)\n')
+      process.exit(1)
     }
     // Num painel, quem recompila fora do sandbox é o painel: sai com 7, que é
     // o código que ele conhece.
