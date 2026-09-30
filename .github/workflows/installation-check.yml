@@ -1,0 +1,26 @@
+name: Installation check
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['22', '24']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install --omit=dev --ignore-scripts --no-audit --no-fund
+      - run: node patches/baileys.cjs
+      - run: npm run check
+      - name: Check launcher syntax
+        run: node --check start.js

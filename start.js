@@ -175,12 +175,15 @@ function sqliteFunciona() {
     ['-e', "new (require('./node_modules/better-sqlite3'))(':memory:').close()"], { encoding: 'utf8' })
   return r.status === 0
 }
-function instalarDeps() {
+export function instalarDeps(run = correrShell, prepararSqlite = binarioSqlite) {
   log(C.amarelo, '  ↓  A instalar/atualizar dependências...')
   // --ignore-scripts: dentro de painéis com sandbox, compilar módulos nativos
   // rebenta ("Bad system call"). O binário do sqlite vem pronto logo a seguir.
-  correrShell('npm install --ignore-scripts --no-fund --no-audit --prefer-offline')
-  binarioSqlite()
+  const result = run('npm install --omit=dev --ignore-scripts --no-fund --no-audit --prefer-offline')
+  if (result?.status !== 0 || result?.error) {
+    throw new Error('A instalação dos módulos falhou. O bot não será iniciado nem marcado como atualizado. Confirma o erro do npm acima: espaço em disco, acesso à internet e Git instalado no host. Depois volta a executar npm start.')
+  }
+  prepararSqlite()
   log(C.verde, '  ✓  Dependências prontas!\n')
 }
 function binarioSqlite() {
@@ -262,6 +265,29 @@ function aplicarPatches() {
   if (existsSync(p)) spawnSync(process.execPath, [p], { stdio: 'ignore' })
 }
 
+// Read-only diagnosis for hosts: no updates, pairing, license requests or real database.
+export function verificarAmbiente() {
+  const report = [`Node: ${process.version}`, `Sistema: ${process.platform}/${process.arch}`]
+  let ok = true
+  try {
+    const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
+    const installed = JSON.parse(readFileSync('node_modules/@whiskeysockets/baileys/package.json', 'utf8')).version
+    const expected = pkg.dependencies['@whiskeysockets/baileys']
+    report.push(`Baileys: ${installed} (pacote: ${expected})`)
+    if (installed !== expected) { ok = false; report.push('Versão diferente do pacote: executa npm install antes de iniciar.') }
+    const imports = spawnSync(process.execPath, ['--input-type=module', '-e',
+      `for (const name of ${JSON.stringify(Object.keys(pkg.dependencies))}) { try { await import(name) } catch { console.error('Não foi possível carregar: '+name); process.exitCode=1 } }`], { encoding: 'utf8' })
+    if (imports.status !== 0) { ok = false; report.push(String(imports.stderr || 'Falha ao carregar os módulos.').trim()) }
+  } catch { ok = false; report.push('Faltam módulos ou o package.json. Executa npm install na pasta do bot.') }
+  const embedded = spawnSync(process.execPath, ['-e', "new (require('node:sqlite').DatabaseSync)(':memory:').close()"], { encoding:'utf8' }).status === 0
+  if (sqliteFunciona()) report.push('SQLite nativo: OK')
+  else if (embedded) report.push('SQLite embutido: OK (não precisa de compilar)')
+  else { ok = false; report.push('SQLite indisponível. Seleciona Node 22.13+ ou Node 24 no painel do host.') }
+  report.push(temComando('git') ? 'Git: disponível' : 'Git: não encontrado. É necessário para instalar a dependência libsignal do Baileys.')
+  for (const line of report) console.log(line)
+  return ok
+}
+
 // ── Arranque ──────────────────────────────────────────────────────────
 function principal() {
   banner()
@@ -307,4 +333,12 @@ function principal() {
 
 // Só arranca quando é ESTE o ficheiro corrido. Assim os testes podem importar a
 // cópia — a parte que mexe nos ficheiros do cliente — sem levantar um bot.
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) principal()
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  try {
+    if (process.argv.includes('--check')) process.exitCode = verificarAmbiente() ? 0 : 1
+    else principal()
+  } catch (error) {
+    log(C.vermelho, `  ✗  ${error.message}`)
+    process.exitCode = 1
+  }
+}
