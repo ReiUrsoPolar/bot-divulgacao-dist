@@ -11,4 +11,4 @@ Se o host não permitir compilar better-sqlite3, o bot pode usar SQLite embutido
 
 Se falhar, envia ao suporte o nome do host, a versão do Node e a primeira mensagem de erro do npm. Não envies tokens, ficheiros da sessão ou passwords.
 
-A versão 1.0.1 usa Baileys 6.7.22, que corrige a vulnerabilidade GHSA-qvv5-jq5g-4cgg. Instalações antigas só recebem a correção depois de atualizar o pacote e as dependências.
+Desde a versão 1.0.1 o bot usa Baileys 6.7.22, que corrige a vulnerabilidade GHSA-qvv5-jq5g-4cgg. Instalações antigas só recebem a correção depois de atualizar o pacote e as dependências.

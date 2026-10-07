@@ -1,6 +1,6 @@
 {
   "name": "bot-divulgacao",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Bot de divulgação em massa para WhatsApp",
   "type": "module",
   "main": "index.js",
